@@ -12,11 +12,11 @@ namespace InnStudio\Plugins\InnObjectCacheDiagnosis;
 
 class InnObjectCacheDiagnosis
 {
-    public const ID = 'innObjectCacheDiagnosis';
+    const ID = 'innObjectCacheDiagnosis';
 
-    public const VERSION = '1.0.0';
+    const VERSION = '1.0.0';
 
-    private const CACHE_FILE_PATH = \WP_CONTENT_DIR . '/object-cache.php';
+    const CACHE_FILE_PATH = \WP_CONTENT_DIR . '/object-cache.php';
 
     private $actionId = '';
 

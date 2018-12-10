@@ -2,7 +2,7 @@
 WordPress Plugin
 
 - Requires at least: 4.9.7
-- Tested up to: 4.9.8
+- Tested up to: 5.0.0
 - Requires PHP: 7.2.0
 - License: GPLv2
 
