@@ -5,16 +5,20 @@
 // Description: An Object-Cache diagnosis for WordPress. | 诊断您的 WordPress 对象缓存是否正常运作。
 // Author: INN STUDIO
 // Author URI: https://inn-studio.com
-// Version: 1.0.0
-// Required PHP: 7.2
+// Version: 1.0.1
+// Required PHP: 7.3
+
+declare(strict_types = 1);
 
 namespace InnStudio\Plugins\InnObjectCacheDiagnosis;
+
+\defined('AUTH_KEY') || \http_response_code(401) && die;
 
 class InnObjectCacheDiagnosis
 {
     const ID = 'innObjectCacheDiagnosis';
 
-    const VERSION = '1.0.0';
+    const VERSION = '1.0.1';
 
     const CACHE_FILE_PATH = \WP_CONTENT_DIR . '/object-cache.php';
 
@@ -46,7 +50,7 @@ class InnObjectCacheDiagnosis
         if (false !== \stripos($pluginFile, \basename(__DIR__))) {
             $adminUrl = get_admin_url();
             $opts     = <<<HTML
-<a href="{$adminUrl}admin-ajax.php?action={$this->actionId}" target="_blank" class="button button-primary" style="line-height: 1.5; height: auto;">Detect | 开始诊断</a>
+<a href="{$adminUrl}admin-ajax.php?action={$this->actionId}" target="_blank" class="button button-primary" style="line-height: 1.5; height: auto; min-height: unset">Detect | 开始诊断</a>
 HTML;
 
             if ( ! \is_array($actions)) {
@@ -61,7 +65,7 @@ HTML;
 
     private function getCurrentUrl(): string
     {
-        $scheme = is_ssl() ? 'https' : 'http';
+        $scheme = \is_ssl() ? 'https' : 'http';
 
         return "{$scheme}://{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}";
     }
@@ -85,14 +89,19 @@ HTML;
         switch (true) {
         case false !== \stripos($content, 'new Memcached') || false !== \stripos($content, 'new \\Memcached'):
             return 'Memcached';
+
         case false !== \stripos($content, 'new Memcache') || false !== \stripos($content, 'new \\Memcache'):
             return 'Memcache';
-        case false !== \stripos($content, 'filecache') || false !== \stripos($content, 'file cache'):
+
+        case false !== \stripos($content, 'filecache') || false !== \stripos($content, 'file cache') || false !== \stripos($content, 'cache-file'):
             return 'File Cache';
+
         case false !== \stripos($content, 'new Redis') || false !== \stripos($content, 'new \\Redis') || false !== \stripos($content, 'new Predis') || false !== \stripos($content, 'new \\Predis'):
             return 'Redis';
+
         case false !== \stripos($content, 'new SQLite3') || false !== \stripos($content, 'new \\SQLite3'):
             return 'SQLite3';
+
         default:
             return 'Unknow';
         }
@@ -177,6 +186,7 @@ HTML;
             $color = 'green';
 
             break;
+
         case -1 === $status:
             $icon  = '✖️';
             $color = 'red';
